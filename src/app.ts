@@ -1,9 +1,14 @@
 import express, { Request, Response } from "express";
+import initDB from "./config/db";
 const app = express();
-const port = 5000;
+// parser
+app.use(express.json());
+
+// init DB
+initDB();
 
 app.get("/", (req: Request, res: Response) => {
   res.send("Hello World!");
 });
 
-export default app
+export default app;
