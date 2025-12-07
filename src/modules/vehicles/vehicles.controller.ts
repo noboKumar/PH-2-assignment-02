@@ -17,6 +17,23 @@ const postVehicles = async (req: Request, res: Response) => {
   }
 };
 
+const getAllVehicles = async (req: Request, res: Response) => {
+  try {
+    const result = await vehiclesServices.getAllVehicles();
+    res.status(200).json({
+      success: true,
+      message: "Data retrieved successfully",
+      data: result.rows,
+    });
+  } catch (error: any) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
 export const vehiclesControllers = {
   postVehicles,
+  getAllVehicles,
 };
