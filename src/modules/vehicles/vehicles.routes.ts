@@ -8,5 +8,6 @@ router.post("/", auth("admin"), vehiclesControllers.postVehicles);
 router.get("/", vehiclesControllers.getAllVehicles);
 router.get("/:vehicleId", vehiclesControllers.getSingleVehicle);
 router.put("/:vehicleId", auth("admin"), vehiclesControllers.updateVehicles);
+router.delete("/:vehicleId", auth("admin"), vehiclesControllers.deleteVehicle);
 
 export const vehiclesRoute = router;
