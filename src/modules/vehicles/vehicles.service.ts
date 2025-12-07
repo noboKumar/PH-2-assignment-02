@@ -27,8 +27,10 @@ const getAllVehicles = async () => {
   return result;
 };
 
-const getSingleVehicles = async (id: string) => {
-  const result = await pool.query(`SELECT * FROM vehicles WHERE id=$1`, [id]);
+const getSingleVehicles = async (vehicleId: string) => {
+  const result = await pool.query(`SELECT * FROM vehicles WHERE id=$1`, [
+    vehicleId,
+  ]);
   return result;
 };
 
