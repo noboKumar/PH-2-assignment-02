@@ -17,6 +17,28 @@ const signupUser = async (req: Request, res: Response) => {
   }
 };
 
+const signinUser = async (req: Request, res: Response) => {
+  const { email, password } = req.body;
+
+  try {
+    const { token , user } = await authService.signinUser(email, password);
+
+    res.setHeader("Authorization", `Bearer ${token}`);
+
+    res.status(200).json({
+      success: true,
+      message: "User logged in successfully",
+      data: user,
+    });
+  } catch (error: any) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
 export const authController = {
   signupUser,
+  signinUser,
 };
