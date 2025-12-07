@@ -94,7 +94,7 @@ const deleteVehicle = async (req: Request, res: Response) => {
     if (result.rows.length === 0) {
       res.status(404).json({
         success: false,
-        message: "Data not found",
+        message: "Cannot delete vehicle",
       });
     } else {
       res.status(200).json({
