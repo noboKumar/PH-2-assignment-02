@@ -32,7 +32,15 @@ const updateUser = async (
   return result;
 };
 
+const deleteUser = async (userId: string) => {
+  const result = await pool.query(`DELETE FROM users WHERE id=$1 RETURNING *`, [
+    userId,
+  ]);
+  return result;
+};
+
 export const userServices = {
   getUser,
   updateUser,
+  deleteUser,
 };
