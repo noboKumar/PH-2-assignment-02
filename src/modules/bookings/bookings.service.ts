@@ -5,7 +5,6 @@ const postBookings = async (
   userId: string
 ) => {
   const { vehicleId, rent_start_date, rent_end_date } = payload;
-  console.log("post: ", userId);
 
   const availableVehicle = await pool.query(
     `SELECT * FROM vehicles WHERE id=$1 AND availability_status='available'`,
@@ -53,7 +52,64 @@ const getBookings = async (userId: number, userRole: string) => {
   return result;
 };
 
+const updateBooking = async (
+  bookingId: string,
+  userRole: string,
+  userId: number,
+  payload: Record<string, unknown>
+) => {
+  const { status } = payload;
+
+  const bookingData = await pool.query(`SELECT * FROM bookings`);
+  const booking = bookingData.rows[0];
+
+  if (userRole === "customer" && status === "cancelled") {
+    if (booking.customer_id !== userId) {
+      throw new Error("not your booking");
+    }
+
+    const today = new Date();
+    const startDate = new Date(booking.rent_start_date);
+
+    if (today >= startDate) {
+      throw new Error("Can't update after start date");
+    }
+
+    const result = await pool.query(
+      `UPDATE bookings SET  status='cancelled' WHERE id=$1 RETURNING *`,
+      [bookingId]
+    );
+    return { message: "Booking Cancelled", data: result.rows[0] };
+  }
+
+  if (userRole === "admin" && status === "returned") {
+    const result = await pool.query(
+      `UPDATE bookings SET status='returned' WHERE id=$1`,
+      [bookingId]
+    );
+    await pool.query(
+      `UPDATE vehicles SET availability_status='available' WHERE id=$1`,
+      [booking.vehicle_id]
+    );
+
+    const vehicleData = await pool.query(`SELECT * FROM vehicles WHERE id=$1`, [
+      booking.vehicle_id,
+    ]);
+    return {
+      success: true,
+      message: "Booking marked as returned. Vehicle is now available",
+      data: {
+        ...vehicleData.rows[0],
+        vehicle: {
+          availability_status: vehicleData.rows[0].availability_status,
+        },
+      },
+    };
+  }
+};
+
 export const bookingsServices = {
   postBookings,
   getBookings,
+  updateBooking,
 };
