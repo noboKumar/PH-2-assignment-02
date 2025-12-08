@@ -7,7 +7,7 @@ const signupUser = async (req: Request, res: Response) => {
     res.status(201).json({
       success: true,
       message: "User registered successfully.",
-      data: result.rows[0],
+      data: result,
     });
   } catch (error: any) {
     res.status(500).json({
@@ -21,7 +21,7 @@ const signinUser = async (req: Request, res: Response) => {
   const { email, password } = req.body;
 
   try {
-    const { token , user } = await authService.signinUser(email, password);
+    const { token, user } = await authService.signinUser(email, password);
 
     res.setHeader("Authorization", `Bearer ${token}`);
 

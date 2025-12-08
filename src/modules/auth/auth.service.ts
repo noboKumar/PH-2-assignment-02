@@ -27,7 +27,15 @@ const signupUser = async (payload: Record<string, unknown>) => {
     `INSERT INTO users (name, email, password, phone, role) VALUES($1, $2, $3, $4, $5) RETURNING *`,
     [name, email, hashedPass, phone, role]
   );
-  return result;
+  const users = result.rows[0];
+  const user = {
+    id: users.id,
+    name: users.name,
+    email: users.email,
+    phone: users.phone,
+    role: users.role,
+  };
+  return user;
 };
 
 const signinUser = async (
