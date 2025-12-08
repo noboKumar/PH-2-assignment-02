@@ -5,6 +5,7 @@ const postBookings = async (
   userId: string
 ) => {
   const { vehicleId, rent_start_date, rent_end_date } = payload;
+  console.log("post: ", userId);
 
   const availableVehicle = await pool.query(
     `SELECT * FROM vehicles WHERE id=$1 AND availability_status='available'`,
@@ -37,6 +38,22 @@ const postBookings = async (
   return result;
 };
 
+const getBookings = async (userId: number, userRole: string) => {
+  let result;
+
+  if (userRole === "admin") {
+    result = await pool.query(`
+    SELECT * FROM bookings
+    `);
+  } else {
+    result = await pool.query(`SELECT * FROM bookings WHERE customer_id=$1`, [
+      userId,
+    ]);
+  }
+  return result;
+};
+
 export const bookingsServices = {
   postBookings,
+  getBookings,
 };
