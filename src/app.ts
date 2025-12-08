@@ -3,6 +3,7 @@ import initDB from "./config/db";
 import { userRoutes } from "./modules/users/users.routes";
 import { authRoutes } from "./modules/auth/auth.routes";
 import { vehiclesRoute } from "./modules/vehicles/vehicles.routes";
+import { bookingsRoute } from "./modules/bookings/bookings.route";
 
 const app = express();
 // parser
@@ -23,5 +24,8 @@ app.use("/api/v1/users", userRoutes);
 
 // vehicles CRUD
 app.use("/api/v1/vehicles", vehiclesRoute);
+
+// bookings CRUD
+app.use("/api/v1/bookings", bookingsRoute);
 
 export default app;
