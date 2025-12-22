@@ -27,8 +27,8 @@ const signinUser = async (req: Request, res: Response) => {
 
     res.status(200).json({
       success: true,
-      message: "User logged in successfully",
-      data: user,
+      message: "Login successful",
+      data: { token: token, user: user },
     });
   } catch (error: any) {
     res.status(500).json({
