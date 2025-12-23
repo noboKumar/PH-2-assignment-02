@@ -4,27 +4,37 @@ import config from "../config";
 
 const auth = (...roles: string[]) => {
   return (req: Request, res: Response, next: NextFunction) => {
-    const token = req.headers.authorization;
+    const authHeader = req.headers.authorization;
     const secret = config.jwt_secret;
 
-    if (!token) {
+    if (!authHeader || !authHeader.startsWith("Bearer ")) {
       return res.status(401).json({
         success: false,
-        message: "Authentication token is missing",
+        message: "Authentication token is missing or invalid format",
       });
     }
+    const token = authHeader.split(" ")[1];
+    try {
+      const decode = jwt.verify(
+        token as string,
+        secret as string
+      ) as JwtPayload;
 
-    const decode = jwt.verify(token as string, secret as string) as JwtPayload;
-
-    req.user = decode;
-    if (roles.length && !roles.includes(decode.role as string)) {
-      return res.status(403).json({
+      req.user = decode;
+      if (roles.length && !roles.includes(decode.role as string)) {
+        return res.status(403).json({
+          success: false,
+          message:
+            "Access denied. You do not have permission to perform this action.",
+        });
+      }
+      next();
+    } catch (error) {
+      return res.status(401).json({
         success: false,
-        message:
-          "Access denied. You do not have permission to perform this action.",
+        message: "Invalid or expired token",
       });
     }
-    next();
   };
 };
 export default auth;

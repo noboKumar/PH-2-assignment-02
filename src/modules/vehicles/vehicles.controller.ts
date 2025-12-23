@@ -6,7 +6,7 @@ const postVehicles = async (req: Request, res: Response) => {
     const result = await vehiclesServices.postVehicles(req.body);
     res.status(201).json({
       success: true,
-      message: "Data retrieved successfully",
+      message: "Vehicle created successfully",
       data: result.rows[0],
     });
   } catch (error: any) {
@@ -46,7 +46,7 @@ const getSingleVehicle = async (req: Request, res: Response) => {
     } else {
       res.status(200).json({
         success: true,
-        message: "Data retrieved successfully",
+        message: "Vehicle created successfully",
         data: result.rows,
       });
     }
