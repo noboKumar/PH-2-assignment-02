@@ -20,11 +20,20 @@ const postVehicles = async (req: Request, res: Response) => {
 const getAllVehicles = async (req: Request, res: Response) => {
   try {
     const result = await vehiclesServices.getAllVehicles();
-    res.status(200).json({
-      success: true,
-      message: "Data retrieved successfully",
-      data: result.rows,
-    });
+
+    if (!result.rows || result.rows.length === 0) {
+      res.status(404).json({
+        success: true,
+        message: "No vehicles found",
+        data: [],
+      });
+    } else {
+      res.status(200).json({
+        success: true,
+        message: "Vehicles retrieved successfully",
+        data: result.rows,
+      });
+    }
   } catch (error: any) {
     res.status(500).json({
       success: false,
