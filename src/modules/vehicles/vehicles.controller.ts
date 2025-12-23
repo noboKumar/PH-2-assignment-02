@@ -50,7 +50,7 @@ const getSingleVehicle = async (req: Request, res: Response) => {
     if (result.rows.length === 0) {
       res.status(404).json({
         success: false,
-        message: "No vehicles found",
+        message: "Vehicle not found",
       });
     } else {
       res.status(200).json({
@@ -76,12 +76,12 @@ const updateVehicles = async (req: Request, res: Response) => {
     if (result.rows.length === 0) {
       res.status(404).json({
         success: false,
-        message: "Data not found",
+        message: "Vehicle not found",
       });
     } else {
       res.status(200).json({
         success: true,
-        message: "Data retrieved successfully",
+        message: "Vehicle updated successfully",
         data: result.rows,
       });
     }
