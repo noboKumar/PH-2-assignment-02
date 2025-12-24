@@ -1,14 +1,11 @@
 import { pool } from "../../config/db";
 
-const postBookings = async (
-  payload: Record<string, unknown>,
-  userId: string
-) => {
-  const { vehicleId, rent_start_date, rent_end_date } = payload;
+const postBookings = async (payload: Record<string, unknown>) => {
+  const { customer_id, vehicle_id, rent_start_date, rent_end_date } = payload;
 
   const availableVehicle = await pool.query(
     `SELECT * FROM vehicles WHERE id=$1 AND availability_status='available'`,
-    [vehicleId]
+    [vehicle_id]
   );
 
   if (availableVehicle.rows.length === 0) {
@@ -28,11 +25,11 @@ const postBookings = async (
 
   const result = await pool.query(
     `INSERT INTO bookings (customer_id, vehicle_id, rent_start_date, rent_end_date, total_price, status) VALUES($1, $2, $3, $4, $5, 'active') RETURNING *`,
-    [userId, vehicleId, rent_start_date, rent_end_date, totalPrice]
+    [customer_id, vehicle_id, rent_start_date, rent_end_date, totalPrice]
   );
   await pool.query(
     `UPDATE vehicles SET availability_status='booked' WHERE id=$1`,
-    [vehicleId]
+    [vehicle_id]
   );
   return result;
 };
