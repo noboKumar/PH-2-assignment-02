@@ -54,7 +54,6 @@ const updateBooking = async (req: Request, res: Response) => {
     );
     res.status(200).json({
       success: true,
-      message: "vehicle updated successfully",
       data: result,
     });
   } catch (error: any) {

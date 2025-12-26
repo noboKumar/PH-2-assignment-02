@@ -137,7 +137,9 @@ const updateBooking = async (
 ) => {
   const { status } = payload;
 
-  const bookingData = await pool.query(`SELECT * FROM bookings`);
+  const bookingData = await pool.query(`SELECT * FROM bookings WHERE id=$1`, [
+    bookingId,
+  ]);
   const booking = bookingData.rows[0];
 
   if (userRole === "customer" && status === "cancelled") {
@@ -156,30 +158,29 @@ const updateBooking = async (
       `UPDATE bookings SET  status='cancelled' WHERE id=$1 RETURNING *`,
       [bookingId]
     );
-    return { message: "Booking Cancelled", data: result.rows[0] };
+    return {
+      message: "Booking Cancelled",
+      data: { ...result.rows[0] },
+    };
   }
 
   if (userRole === "admin" && status === "returned") {
     const result = await pool.query(
-      `UPDATE bookings SET status='returned' WHERE id=$1`,
+      `UPDATE bookings SET status='returned' WHERE id=$1 RETURNING *`,
       [bookingId]
     );
+
     await pool.query(
       `UPDATE vehicles SET availability_status='available' WHERE id=$1`,
       [booking.vehicle_id]
     );
 
-    const vehicleData = await pool.query(`SELECT * FROM vehicles WHERE id=$1`, [
-      booking.vehicle_id,
-    ]);
     return {
       success: true,
       message: "Booking marked as returned. Vehicle is now available",
       data: {
-        ...vehicleData.rows[0],
-        vehicle: {
-          availability_status: vehicleData.rows[0].availability_status,
-        },
+        ...result.rows[0],
+        vehicle: { availability_status: "available" },
       },
     };
   }
