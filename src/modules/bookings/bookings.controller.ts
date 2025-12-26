@@ -26,7 +26,10 @@ const getBookings = async (req: Request, res: Response) => {
 
     res.status(200).json({
       success: true,
-      message: "Bookings retrieved successfully",
+      message:
+        userRole === "admin"
+          ? "Bookings retrieved successfully"
+          : "Your bookings retrieved successfully",
       data: result,
     });
   } catch (error: any) {
